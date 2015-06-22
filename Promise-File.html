@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        function createFilePromise(file) {
+            return new Promise(function (resolve, reject) {
+                var filereader = new FileReader();
+
+                filereader.addEventListener('loadend', function () {
+                    resolve(filereader.result);
+                });
+                filereader.addEventListener('error', function () {
+                    reject(filereader.result);
+                });
+                filereader.readAsDataURL(file);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelector('input[type="file"]').addEventListener('change', function() {
+                var files = Array.prototype.slice.call(this.files);
+
+                var promises = files.map(createFilePromise);
+
+                Promise.all(promises).then(function (dataUris) {
+                    console.log(dataUris);
+                    dataUris.forEach(function (dataUri) {
+                        createElement('img', document.body, '', {src : dataUri});
+
+                    });
+                }, function (err) {
+                    console.log(err);
+                });
+            });
+        });
+        /*
+        var sources = ['http://www.wolframcdn.com/homepage/example-pods/PeopleHistory-icon.svg',
+            'http://www.wolframcdn.com/homepage/example-pods/Surprises-icon.svg',
+            'http://www.mathworks.com/images/nextgen/global/ico-functions-32.png'
+        ];
+
+        var promises = sources.map(createFilePromise); */
+
+        function createElement(elementType, parent, innerHtml, custom) {
+            var element = document.createElement(elementType);
+
+            if ( parent ) { parent.appendChild(element); }
+
+            if ( innerHtml ) { element.innerHTML = innerHtml; }
+
+            if ( typeof custom !== 'undefined' ) {
+                for ( var prop in custom ) {
+                    element.setAttribute( prop, custom[prop] );
+                }
+            }
+
+            return element;
+        }
+
+    </script>
+</head>
+<body>
+    <input type="file" multiple />
+</body>
+</html>

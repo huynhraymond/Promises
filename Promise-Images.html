@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        function createImagePromise(src) {
+            return new Promise(function (resolve, reject) {
+                var img = new Image();
+                img.addEventListener('load', function () {
+                    resolve(img);
+                });
+                img.addEventListener('error', function (e) {
+                    reject(e);
+                });
+                img.src = src;
+            });
+        }
+        var sources = ['http://www.wolframcdn.com/homepage/example-pods/PeopleHistory-icon.svg',
+            'http://www.wolframcdn.com/homepage/example-pods/Surprises-icon.svg',
+            'http://www.mathworks.com/images/nextgen/global/ico-functions-32.png'
+        ];
+        var promises = sources.map(createImagePromise);
+        Promise.all(promises).then(function (imgs) {
+            console.log(imgs);
+            imgs.forEach(function (img) {
+                document.body.appendChild(img);
+            });
+        }, function (err) {
+            console.log(err);
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

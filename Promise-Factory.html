@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+
+        var urls = ['nodejs', 'express', 'mongo'].map(function(term) {
+            return  'https://api.github.com/search/repositories?q=' + term;
+        });
+        //var url = 'https://api.github.com/search/repositories?q=nodejs';
+
+        function createAjaxPromises(url) {
+            return new Promise( function(resolve, reject) {
+                try {
+                    var xhr = new XMLHttpRequest(url);
+
+                    xhr.open('GET', url);
+
+                    xhr.addEventListener('readystatechange', function () {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) resolve(xhr);
+                            else reject(xhr);
+                        }
+                    });
+
+                    xhr.send();
+                }
+
+                catch (err) {
+                    reject(err);
+                }
+            });
+        }
+
+        var factoryPromises = urls.map(createAjaxPromises);
+
+        Promise.all(factoryPromises).then(function(data) {
+            console.log(data);
+                },
+
+                function(xhr) {
+                    console.log('Wrong ' + xhr.status + ' in ' + xhr.statusText);
+                });
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
